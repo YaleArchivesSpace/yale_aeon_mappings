@@ -51,6 +51,12 @@ class YaleAeonAOMapper < AeonArchivalObjectMapper
       mapped['collection_id'] += '; ' + ei['external_id']
     end
 
+    # new mapping, in case we have digital objects.  to start, we're just passing the database ID values, separated by a comma if more than one.
+    daos = self.record.raw['_resolved_digital_object_uris']
+    if daos
+      mapped['ItemInfo15'] = self.record.raw['_resolved_digital_object_uris'].keys.map {|uri| uri.split('/')[-1]}.join(', ')
+    end
+
     StatusUpdater.update('Yale Aeon Last Request', :good, "Mapped: #{mapped['uri']}")
 
     mapped
